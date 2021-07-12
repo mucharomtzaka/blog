@@ -1,0 +1,83 @@
+{% extends "base.html" %} 
+{% block content %}
+<style>
+    body {
+        font-family: "Roboto", sans-serif;
+        font-size: 18px;
+        background-color: #fdfdfd;
+    }
+    
+    .head_text {
+        color: white;
+    }
+    
+    .card {
+        box-shadow: 0 16px 48px #E3E7EB;
+    }
+</style>
+
+  {% block header %} 
+  {% include 'header.html' %}
+  {% endblock header %}
+<div class="container">
+    <div class="row">
+      
+        <!-- Blog Entries Column -->
+        <div class="col-md-8 mt-3 left">
+   
+        <form method='GET'>
+        <input type='text' name='q' value='{{ request.GET.q }}' placeholder="Title">
+        <input class="button" type='submit' value="Search">
+        </form>
+         <br>
+         <br>
+          
+            {% for post in post_list %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">{{ post.title }}</h2>
+                    <p class="card-text text-muted h6">{{ post.author }} | {{ post.created_on}} </p>
+                    <p class="card-text">{{post.content|slice:":200" }}</p>
+                    <a href="{% url 'post_detail' post.slug  %}" class="btn btn-primary">Read More &rarr;</a>
+                </div>
+            </div>
+            {% endfor %}
+
+          {% if is_paginated %}
+          <ul class="pagination">
+          {% if page_obj.has_previous %}
+              <li>
+                  <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
+              </li>
+          {% endif %}
+              <li class="ml-3"> &nbsp; &nbsp;
+                  <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+              </li>
+          {% if page_obj.has_next %}
+              <li>
+                  <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
+              </li>
+          {% endif %}
+          </ul>
+          {% endif %}
+ 
+            
+        </div>
+       {% block sidebar %} {% include 'sidebar.html' %} {% endblock sidebar %}
+        
+        <div class="col-md-12 mt-3 left">
+        <h5 class="card-header">Free Upload Save </h5>
+        
+        <ul>
+          {% for obj in documents %}
+            <li>
+              <a href="{{ obj.document.url }}">{{ obj.document.name }}</a>
+              <small>(Uploaded at: {{ obj.uploaded_at }})</small>
+            </li>
+          {% endfor %}
+        </ul>
+        </div>
+     
+    </div>
+</div>
+{%endblock%}
